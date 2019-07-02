@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script
+  src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBXHGPm7Tag3j_A1M1OLgTSBB_0-SD5Ci8">
+  </script>
+
+<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<style>
+   /* Set the size of the div element that contains the map */
+  #map {
+    height: 200px;  /* The height is 400 pixels */
+    width: 50%;  /* The width is the width of the web page */
+    margin: auto;
+    margin-top: 5%;
+    text-align: center;
+   }
+  #the-img {
+    height: 100px;
+    width: 100px;
+
+  }
+
+  #show{
+    text-align: center;
+  }
+
+
+</style>
+<meta charset=utf-8 />
+
+<title>IMG LOC</title>
+
+
+</head>
+<body>
+
+  <div class="jumbotron">
+
+
+  <div id="show" >
+
+    <input type='file' onchange="readURL(this);" />
+    <img id="the-img" src="#" alt="your image" />
+
+  </div>
+
+  <div id="map">
+
+  </div>
+
+    </div>
+
+
+
+
+
+  <script type="text/javascript">
+
+  function readURL(input) {
+          if (input.files && input.files[0]) {
+              var reader = new FileReader();
+
+              reader.onload = function (e) {
+                  $('#the-img')
+                      .attr('src', e.target.result)
+                      .width(150)
+                      .height(200);
+              };
+
+              reader.readAsDataURL(input.files[0]);
+              document.getElementById("the-img").onclick = function() {
+
+                  EXIF.getData(this, function() {
+
+                      myData = this;
+
+                      console.log(myData.exifdata);
+
+                      var latDegree = myData.exifdata.GPSLatitude[0].numerator;
+                      var latMinute = myData.exifdata.GPSLatitude[1].numerator;
+                      var latSecond = myData.exifdata.GPSLatitude[2].numerator;
+                      var latDirection = myData.exifdata.GPSLatitudeRef;
+
+                      var latFinal = ConvertDMSToDD(latDegree, latMinute, latSecond, latDirection);
+                      console.log(latFinal);
+
+          // Calculate longitude decimal
+                      var lonDegree = myData.exifdata.GPSLongitude[0].numerator;
+                      var lonMinute = myData.exifdata.GPSLongitude[1].numerator;
+                      var lonSecond = myData.exifdata.GPSLongitude[2].numerator;
+                      var lonDirection = myData.exifdata.GPSLongitudeRef;
+
+                      var lonFinal = ConvertDMSToDD(lonDegree, lonMinute, lonSecond, lonDirection);
+                      console.log(lonFinal);
+
+                      initialize(latFinal, lonFinal);
+
+
+
+
+
+                  });
+                }
+          }
+      }
+
+
+
+        function ConvertDMSToDD(degrees, minutes, seconds, direction) {
+
+            var dd = degrees + (minutes/60) + (seconds/36000000);
+
+            if (direction == "S" || direction == "W") {
+                dd = dd * -1;
+            }
+
+            return dd;
+        }
+
+
+        function initialize(la, lo)
+        {
+        var myCenter=new google.maps.LatLng(la,lo);
+        var marker;
+        var mapProp = {
+          center:myCenter,
+          zoom:13,
+          mapTypeId:google.maps.MapTypeId.ROADMAP
+          };
+        var map=new google.maps.Map(document.getElementById("map"),mapProp);
+        marker=new google.maps.Marker({
+          position:myCenter,
+          animation:google.maps.Animation.BOUNCE
+          });
+        marker.setMap(map);
+        }
+
+
+
+
+
+
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+  </script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+
+
+</body>
+</html>
