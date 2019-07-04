@@ -10,7 +10,7 @@ function readURL(input) {
             };
 
             reader.readAsDataURL(input.files[0]);
-            document.getElementById("the-img").onclick = function() {
+            document.getElementById("the-img").onload = function() {
 
                 EXIF.getData(this, function() {
 
@@ -60,9 +60,9 @@ function readURL(input) {
       }
 
 
-      function initialize(la, lo)
+      function initialize(lan, lon)
       {
-      var myCenter=new google.maps.LatLng(la,lo);
+      var myCenter=new google.maps.LatLng(lan,lon);
       var marker;
       var mapProp = {
         center:myCenter,
